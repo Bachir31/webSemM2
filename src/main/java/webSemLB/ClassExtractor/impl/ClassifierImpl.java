@@ -1,6 +1,8 @@
 package webSemLB.ClassExtractor.impl;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 import org.semarglproject.jena.rdf.rdfa.JenaRdfaReader;
@@ -9,6 +11,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import webSemLB.ClassExtractor.service.Classifier;
@@ -25,7 +28,8 @@ public class ClassifierImpl implements Classifier {
 	}
 
 	public Collection<String> retrieveTypes(String iri) {
-		
+		HashSet<Resource> classSet = new HashSet<Resource>();
+		ArrayDeque<Resource> queue = null;
 		if (iri == null) {
 			return null;
 		}
@@ -44,7 +48,18 @@ public class ClassifierImpl implements Classifier {
 				while (it.hasNext()) {
 					RDFNode object = it.next();
 					
+					if ( object instanceof Resource) {
+						logger.info("Find IRI Class <" + object.toString() + ">");
+						classSet.add((Resource) object);
+					}
 				}
+				
+				queue = new ArrayDeque<Resource>(classSet);
+				
+				while(!queue.isEmpty()) {
+					retrieveSuperClasses(queue.pop().toString());
+				}
+				
 				break;
 			} catch (Exception e) {
 				model.remove(model);
@@ -55,7 +70,8 @@ public class ClassifierImpl implements Classifier {
 	}
 
 	public Collection<String> retrieveSuperClasses(String iri) {
-		// TODO Auto-generated method stub
+		System.out.println("##" +iri); 	// this line is a test code
+										//need to implement function 
 		return null;
 	}
 
