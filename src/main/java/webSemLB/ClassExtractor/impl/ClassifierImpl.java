@@ -13,6 +13,7 @@ import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 import webSemLB.ClassExtractor.service.Classifier;
 import webSemLB.common.RdfFormat;
@@ -20,16 +21,20 @@ import webSemLB.common.RdfFormat;
 public class ClassifierImpl implements Classifier {
 	private static Logger logger = Logger.getLogger(ClassifierImpl.class);
 	private Model model;
+	private HashSet<String> allTypeSet = null;
+	private ArrayDeque<String> queue = null;
 
 	public ClassifierImpl() {
 		JenaRdfaReader.inject();
 		model = ModelFactory.createDefaultModel();
-
+		allTypeSet = new HashSet<String>();
+		queue = new ArrayDeque<String>();
 	}
 
 	public Collection<String> retrieveTypes(String iri) {
-		HashSet<Resource> classSet = new HashSet<Resource>();
-		ArrayDeque<Resource> queue = null;
+		
+		HashSet<String> typesSet = null;
+		
 		if (iri == null) {
 			return null;
 		}
@@ -37,6 +42,8 @@ public class ClassifierImpl implements Classifier {
 		if (iri.isEmpty()) {
 			return null;
 		}
+		
+		typesSet = new HashSet<String>();
 		
 		for (RdfFormat format : RdfFormat.values()) {
 
@@ -49,16 +56,11 @@ public class ClassifierImpl implements Classifier {
 					RDFNode object = it.next();
 					
 					if ( object instanceof Resource) {
-						logger.info("Find IRI Class <" + object.toString() + ">");
-						classSet.add((Resource) object);
+						logger.info("[rdf:type] IRI Class <" + object.toString() + ">");
+						typesSet.add(object.toString());
 					}
 				}
 				
-				queue = new ArrayDeque<Resource>(classSet);
-				
-				while(!queue.isEmpty()) {
-					retrieveSuperClasses(queue.pop().toString());
-				}
 				
 				break;
 			} catch (Exception e) {
@@ -66,13 +68,48 @@ public class ClassifierImpl implements Classifier {
 				logger.warn("Bad format : " + format.toString());
 			}
 		} // TODO Auto-generated method stub
-		return null;
+		return typesSet;
 	}
 
 	public Collection<String> retrieveSuperClasses(String iri) {
-		System.out.println("##" +iri); 	// this line is a test code
-										//need to implement function 
-		return null;
+		HashSet<String> classSet = null;
+		
+		if(iri == null) {
+			return null;
+		}
+		
+		if(iri.isEmpty()) {
+			return null;
+		}
+		
+		classSet = new HashSet<String>();
+		//JenaRdfaReader.inject();
+		Model submodel = ModelFactory.createDefaultModel();
+		for (RdfFormat format : RdfFormat.values()) {
+
+			try {
+				submodel.read(iri, format.toString());
+				
+				NodeIterator it = submodel.listObjectsOfProperty(submodel.getResource(iri), RDFS.subClassOf);
+				//NodeIterator it = submodel.listObjectsOfProperty(, p)
+
+				while (it.hasNext()) {
+					RDFNode object = it.nextNode();
+					
+					if ( object instanceof Resource) {
+						logger.info("[rdfs:subClassOf] IRI Class <" + object.toString() + ">");
+						classSet.add(object.toString());
+					}
+				}
+				
+				break;
+			} catch (Exception e) {
+				model.remove(model);
+				logger.warn("Bad format : " + format.toString());
+			}
+		}
+		
+		return classSet;
 	}
 
 	public Collection<String> getAllTypes(String url) {
@@ -84,12 +121,24 @@ public class ClassifierImpl implements Classifier {
 		if (url.isEmpty()) {
 			return null;
 		}
-		this.retrieveTypes(url);
+		allTypeSet.addAll(retrieveTypes(url));
 		
+		queue.addAll(allTypeSet);
 		
+		while(!queue.isEmpty()) {
+			Collection<String> classSet = retrieveSuperClasses(queue.poll());
+			
+			classSet.removeAll(allTypeSet);
+			classSet.removeAll(queue);
+			allTypeSet.addAll(classSet);
+			queue.addAll(classSet);
+			
+		}
+		
+		System.out.println(allTypeSet.toString());
 		logger.info("End function getAllTypes");
 
-		return null;
+		return allTypeSet;
 	}
 
 	public boolean isOfType(String entityIRI, String classIRI) {
