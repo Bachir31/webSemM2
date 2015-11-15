@@ -20,19 +20,13 @@ import webSemLB.common.RdfFormat;
 
 public class ClassifierImpl implements Classifier {
 	private static Logger logger = Logger.getLogger(ClassifierImpl.class);
-	private Model model;
-	private HashSet<String> allTypeSet = null;
-	private ArrayDeque<String> queue = null;
 
 	public ClassifierImpl() {
 		JenaRdfaReader.inject();
-		model = ModelFactory.createDefaultModel();
-		allTypeSet = new HashSet<String>();
-		queue = new ArrayDeque<String>();
 	}
 
 	public Collection<String> retrieveTypes(String iri) {
-
+		Model model = null;
 		HashSet<String> typesSet = null;
 
 		if (iri == null) {
@@ -44,10 +38,12 @@ public class ClassifierImpl implements Classifier {
 		}
 
 		typesSet = new HashSet<String>();
-
+		model = ModelFactory.createDefaultModel();
+		
 		for (RdfFormat format : RdfFormat.values()) { //try reading IRI in differrent format
 
 			try {
+				
 				model.read(iri, format.toString());
 
 				NodeIterator it = model.listObjectsOfProperty(RDF.type);
@@ -70,9 +66,9 @@ public class ClassifierImpl implements Classifier {
 	}
 
 	public Collection<String> retrieveSuperClasses(String iri) {
+		Model model = null;
 		HashSet<String> classSet = null;
-		Model submodel = null;
-
+		
 		if (iri == null) {
 			return null;
 		}
@@ -80,16 +76,16 @@ public class ClassifierImpl implements Classifier {
 		if (iri.isEmpty()) {
 			return null;
 		}
-
+		
 		classSet = new HashSet<String>();
-		submodel = ModelFactory.createDefaultModel();
+		model = ModelFactory.createDefaultModel();
 		
 		for (RdfFormat format : RdfFormat.values()) { //try reading IRI in differrent format
 
 			try {
-				submodel.read(iri, format.toString());
+				model.read(iri, format.toString());
 
-				NodeIterator it = submodel.listObjectsOfProperty(submodel.getResource(iri), RDFS.subClassOf);//search all object with Resource = iri and property = "subClassOf"
+				NodeIterator it = model.listObjectsOfProperty(model.getResource(iri), RDFS.subClassOf);//search all object with Resource = iri and property = "subClassOf"
 
 				while (it.hasNext()) {
 					RDFNode object = it.nextNode();
@@ -110,7 +106,9 @@ public class ClassifierImpl implements Classifier {
 	}
 
 	public Collection<String> getAllTypes(String url) {
-
+		HashSet<String> allTypeSet = null;
+		ArrayDeque<String> queue = null;
+		
 		if (url == null) {
 			return null;
 		}
@@ -118,7 +116,8 @@ public class ClassifierImpl implements Classifier {
 		if (url.isEmpty()) {
 			return null;
 		}
-		
+		allTypeSet = new HashSet<String>();
+		queue = new ArrayDeque<String>();
 		allTypeSet.addAll(retrieveTypes(url)); //initialize set of classes
 		queue.addAll(allTypeSet); //add all element in allTypeSet into queue structure
 
