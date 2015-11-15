@@ -32,9 +32,9 @@ public class ClassifierImpl implements Classifier {
 	}
 
 	public Collection<String> retrieveTypes(String iri) {
-		
+
 		HashSet<String> typesSet = null;
-		
+
 		if (iri == null) {
 			return null;
 		}
@@ -42,73 +42,70 @@ public class ClassifierImpl implements Classifier {
 		if (iri.isEmpty()) {
 			return null;
 		}
-		
+
 		typesSet = new HashSet<String>();
-		
-		for (RdfFormat format : RdfFormat.values()) {
+
+		for (RdfFormat format : RdfFormat.values()) { //try reading IRI in differrent format
 
 			try {
 				model.read(iri, format.toString());
-				
+
 				NodeIterator it = model.listObjectsOfProperty(RDF.type);
 
 				while (it.hasNext()) {
 					RDFNode object = it.next();
-					
-					if ( object instanceof Resource) {
-						logger.info("[rdf:type] IRI Class <" + object.toString() + ">");
+
+					if (object instanceof Resource) {
 						typesSet.add(object.toString());
 					}
 				}
-				
-				
+
 				break;
 			} catch (Exception e) {
 				model.remove(model);
-				logger.warn("Bad format : " + format.toString());
+				logger.warn("[retrieveTypes] Bad format : " + format.toString());
 			}
-		} // TODO Auto-generated method stub
+		}
 		return typesSet;
 	}
 
 	public Collection<String> retrieveSuperClasses(String iri) {
 		HashSet<String> classSet = null;
-		
-		if(iri == null) {
+		Model submodel = null;
+
+		if (iri == null) {
 			return null;
 		}
-		
-		if(iri.isEmpty()) {
+
+		if (iri.isEmpty()) {
 			return null;
 		}
-		
+
 		classSet = new HashSet<String>();
-		//JenaRdfaReader.inject();
-		Model submodel = ModelFactory.createDefaultModel();
-		for (RdfFormat format : RdfFormat.values()) {
+		submodel = ModelFactory.createDefaultModel();
+		
+		for (RdfFormat format : RdfFormat.values()) { //try reading IRI in differrent format
 
 			try {
 				submodel.read(iri, format.toString());
-				
-				NodeIterator it = submodel.listObjectsOfProperty(submodel.getResource(iri), RDFS.subClassOf);
-				//NodeIterator it = submodel.listObjectsOfProperty(, p)
+
+				NodeIterator it = submodel.listObjectsOfProperty(submodel.getResource(iri), RDFS.subClassOf);//search all object with Resource = iri and property = "subClassOf"
 
 				while (it.hasNext()) {
 					RDFNode object = it.nextNode();
-					
-					if ( object instanceof Resource) {
-						logger.info("[rdfs:subClassOf] IRI Class <" + object.toString() + ">");
+
+					if (object instanceof Resource) {
 						classSet.add(object.toString());
 					}
 				}
-				
+
 				break;
 			} catch (Exception e) {
-				model.remove(model);
-				logger.warn("Bad format : " + format.toString());
+				model.remove(model);//erase RDF graph and reinitialize him
+				logger.warn("[retrieveSuperClasses] Bad format : " + format.toString());
 			}
 		}
-		
+
 		return classSet;
 	}
 
@@ -121,29 +118,38 @@ public class ClassifierImpl implements Classifier {
 		if (url.isEmpty()) {
 			return null;
 		}
-		allTypeSet.addAll(retrieveTypes(url));
 		
-		queue.addAll(allTypeSet);
-		
-		while(!queue.isEmpty()) {
-			Collection<String> classSet = retrieveSuperClasses(queue.poll());
-			
-			classSet.removeAll(allTypeSet);
-			classSet.removeAll(queue);
-			allTypeSet.addAll(classSet);
-			queue.addAll(classSet);
-			
+		allTypeSet.addAll(retrieveTypes(url)); //initialize set of classes
+		queue.addAll(allTypeSet); //add all element in allTypeSet into queue structure
+
+		while (!queue.isEmpty()) {
+			Collection<String> classSet = retrieveSuperClasses(queue.poll()); 	// dequeues the first IRI in queue and retrieves super class of this IRI
+																				// store the result in a collection
+			classSet.removeAll(allTypeSet); //remove all in elements present in AllTypeSet collection to resultCollection
+			classSet.removeAll(queue);		//remove all in elements present in queue collection to resultCollection
+			allTypeSet.addAll(classSet);	//add the rest of result collection to AllTypeSet collection
+			queue.addAll(classSet);			//add the rest of result collection to queue
+
 		}
-		
-		System.out.println(allTypeSet.toString());
-		logger.info("End function getAllTypes");
+
+		logger.info("[getAllTypes] | size : " + allTypeSet.size() + " | Items : " + allTypeSet.toString());
 
 		return allTypeSet;
 	}
 
 	public boolean isOfType(String entityIRI, String classIRI) {
-		// TODO Auto-generated method stub
-		return false;
+		if (entityIRI == null || classIRI == null) {
+			logger.warn("Null entries in arguments of isOfType");
+			return false;
+		}
+
+		if (entityIRI.isEmpty() || classIRI.isEmpty()) {
+			logger.warn("Empty entries in arguments of isOfType");
+			return false;
+		}
+		Collection<String> result = getAllTypes(entityIRI);
+		
+		return result.contains(classIRI);
 	}
 
 }
