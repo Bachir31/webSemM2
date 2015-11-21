@@ -45,8 +45,8 @@ public class ClassifierImpl implements Classifier {
 			try {
 				
 				model.read(iri, format.toString());
-
-				NodeIterator it = model.listObjectsOfProperty(RDF.type);
+				
+				NodeIterator it = model.listObjectsOfProperty(model.getResource(iri),RDF.type);
 
 				while (it.hasNext()) {
 					RDFNode object = it.next();
@@ -147,7 +147,7 @@ public class ClassifierImpl implements Classifier {
 			return false;
 		}
 		Collection<String> result = getAllTypes(entityIRI);
-		
+		System.out.println(result);
 		return result.contains(classIRI);
 	}
 
