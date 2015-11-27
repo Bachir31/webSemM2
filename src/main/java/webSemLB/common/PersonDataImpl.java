@@ -138,7 +138,36 @@ public class PersonDataImpl implements PersonData {
 	}
 
 	public String picture(RDFNode person, Model model) {
-		// TODO Auto-generated method stub
+		Resource resourcePerson = null;
+		Statement statement1 = null;
+
+		if (person == null) {
+			logger.warn("[PersonImpl.picture] argument person is null");
+			return null;
+		}
+
+		if (person.isResource()) {
+			resourcePerson = (Resource) person;
+			Property propertyFoafImg = model.createProperty(NS_FOAF + "img");
+			Property propertyFoafDepiction = model.createProperty(NS_FOAF + "depiction");
+			Property propertyShemeImg = model.createProperty(NS_SCHEME + "image");
+			
+			if (resourcePerson.hasProperty(propertyFoafImg)) {
+				statement1 = resourcePerson.getProperty(propertyFoafImg);
+				return statement1.getString();
+			}
+			
+			if (resourcePerson.hasProperty(propertyFoafDepiction)) {
+				statement1 = resourcePerson.getProperty(propertyFoafDepiction);
+				return statement1.getString();
+			}
+			
+			if (resourcePerson.hasProperty(propertyShemeImg)) {
+				statement1 = resourcePerson.getProperty(propertyShemeImg);
+				return statement1.getString();
+			}
+		}
+		logger.warn("[PersonImpl.picture] argument person is not a instance of Resource");
 		return null;
 	}
 
