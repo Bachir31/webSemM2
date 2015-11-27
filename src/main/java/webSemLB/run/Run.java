@@ -23,16 +23,17 @@ public class Run {
 			System.out.println("not ok");
 		}
 		
-		/*
+		
 		Model m = ModelFactory.createDefaultModel();
 		m.read("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#shadi","RDFA");
 		PersonData person = new PersonDataImpl();
 		RDFNode r = m.createResource("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#eric");
-		String s = person.name(r, m);
+		String s1 = person.name(r, m);
+		String s2 = person.birth(r, m);
 		
-		if(s != null) {
-			System.out.println(s);
-		}*/
+		if(s1 != null && s2 != null) {
+			System.out.println(s1 + " " + s2);
+		}
 	}
 
 }
