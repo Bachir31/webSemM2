@@ -45,24 +45,30 @@ public class PersonDataImpl implements PersonData {
 			if (resourcePerson.hasProperty(propertyFoafName)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyFoafName);
 				return statement1.getString();
-			} else if (resourcePerson.hasProperty(propertySchemeName)) {
+			}
+			
+			if (resourcePerson.hasProperty(propertySchemeName)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertySchemeName);
 				return statement1.getString();
-			} else if (resourcePerson.hasProperty(propertyFoafFirstName)
+			} 
+			
+			if (resourcePerson.hasProperty(propertyFoafFirstName)
 					&& resourcePerson.hasProperty(propertyFoafLastName)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyFoafFirstName);
 				statement2 = (Statement) resourcePerson.getProperty(propertyFoafLastName);
 				return statement1.getString() + " " + statement2.getString();
-			} else if (resourcePerson.hasProperty(propertySchemeGivenName)
+			}
+			
+			if (resourcePerson.hasProperty(propertySchemeGivenName)
 					&& resourcePerson.hasProperty(propertySchemeFamilyName)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertySchemeGivenName);
 				statement2 = (Statement) resourcePerson.getProperty(propertySchemeFamilyName);
 				return statement1.getString() + " " + statement2.getString();
-			} else if (resourcePerson.hasProperty(propertyRdfsLabel)) {
+			}
+			
+			if (resourcePerson.hasProperty(propertyRdfsLabel)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyRdfsLabel);
 				return statement1.getString();
-			} else {
-				return null;
 			}
 		}
 		logger.warn("[PersonImpl.name] argument person is not a instance of Resource");
@@ -87,21 +93,47 @@ public class PersonDataImpl implements PersonData {
 			if (resourcePerson.hasProperty(propertyDboBirth)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyDboBirth);
 				return statement1.getString();
-			} else if (resourcePerson.hasProperty(propertyVcardBirth)) {
+			}
+			
+			if (resourcePerson.hasProperty(propertyVcardBirth)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyVcardBirth);
 				return statement1.getString();
-			} else if (resourcePerson.hasProperty(propertySchemeBirth)) {
+			}
+			
+			if (resourcePerson.hasProperty(propertySchemeBirth)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertySchemeBirth);
 				return statement1.getString();
-			} else {
-				return null;
 			}
 		}
+		logger.warn("[PersonImpl.birth] argument person is not a instance of Resource");
 		return null;
 	}
 
 	public String death(RDFNode person, Model model) {
-		// TODO Auto-generated method stub
+		Resource resourcePerson = null;
+		Statement statement1 = null;
+
+		if (person == null) {
+			logger.warn("[PersonImpl.death] argument person is null");
+			return null;
+		}
+
+		if (person.isResource()) {
+			resourcePerson = (Resource) person;
+			Property propertyDboDeath = model.createProperty(NS_DBO + "deathDate");
+			Property propertySchemeDeath = model.createProperty(NS_SCHEME + "deathDate");
+			
+			if (resourcePerson.hasProperty(propertyDboDeath)) {
+				statement1 = (Statement) resourcePerson.getProperty(propertyDboDeath);
+				return statement1.getString();
+			} 
+			
+			if (resourcePerson.hasProperty(propertySchemeDeath)) {
+				statement1 = (Statement) resourcePerson.getProperty(propertySchemeDeath);
+				return statement1.getString();
+			} 
+		}
+		logger.warn("[PersonImpl.death] argument person is not a instance of Resource");
 		return null;
 	}
 
