@@ -27,10 +27,11 @@ public class PersonDataImpl implements PersonData {
 		Statement statement1 = null;
 		Statement statement2 = null;
 
-		if (person == null) {
-			logger.warn("[PersonImpl.name] argument person is null");
+		if (person == null || model == null) {
+			logger.warn("[PersonImpl.name] argument person or model is null");
 			return null;
 		}
+		
 
 		if (person.isResource()) {
 			resourcePerson = (Resource) person;
@@ -79,8 +80,8 @@ public class PersonDataImpl implements PersonData {
 		Resource resourcePerson = null;
 		Statement statement1 = null;
 
-		if (person == null) {
-			logger.warn("[PersonImpl.birth] argument person is null");
+		if (person == null || model == null) {
+			logger.warn("[PersonImpl.birth] argument person or model is null");
 			return null;
 		}
 
@@ -113,11 +114,11 @@ public class PersonDataImpl implements PersonData {
 		Resource resourcePerson = null;
 		Statement statement1 = null;
 
-		if (person == null) {
-			logger.warn("[PersonImpl.death] argument person is null");
+		if (person == null || model == null) {
+			logger.warn("[PersonImpl.death] argument person or model is null");
 			return null;
 		}
-
+		
 		if (person.isResource()) {
 			resourcePerson = (Resource) person;
 			Property propertyDboDeath = model.createProperty(NS_DBO + "deathDate");
@@ -141,8 +142,8 @@ public class PersonDataImpl implements PersonData {
 		Resource resourcePerson = null;
 		Statement statement1 = null;
 
-		if (person == null) {
-			logger.warn("[PersonImpl.picture] argument person is null");
+		if (person == null || model == null) {
+			logger.warn("[PersonImpl.picture] argument person or model is null");
 			return null;
 		}
 
