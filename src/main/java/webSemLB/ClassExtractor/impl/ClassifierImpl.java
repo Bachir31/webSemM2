@@ -59,7 +59,7 @@ public class ClassifierImpl implements Classifier {
 				break;
 			} catch (Exception e) {
 				model.remove(model);
-				logger.warn("[retrieveTypes] Bad format : " + format.toString());
+				logger.warn("[ClassifierImpl.retrieveTypes] Bad format : " + format.toString());
 			}
 		}
 		return typesSet;
