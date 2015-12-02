@@ -1,11 +1,16 @@
 package webSemLB.common;
 
+import java.awt.image.PixelInterleavedSampleModel;
+
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+
+import webSemLB.ClassExtractor.impl.ClassifierImpl;
+import webSemLB.ClassExtractor.service.Classifier;
 
 public class PersonExtractor extends RDFExtractor {
 	
@@ -66,8 +71,30 @@ public class PersonExtractor extends RDFExtractor {
 		return null;
 	}
 	
-	public void showPersonData(String iri) {
+	public int showPersonData(String iri) {
 		
+		int i = 0;
+		RDFNode primaryTopic = null;
+		Classifier classifier = new ClassifierImpl();
+		
+		if(iri == null) {
+			logger.info("[PersonExtractor.showPersonData] Given IRI is null !");
+			return 0;
+		}
+		
+		primaryTopic = primaryTopic(iri);
+		
+		if(primaryTopic == null) {
+			return 0;
+		}
+		
+		if(primaryTopic.isResource()) {
+			if(	classifier.isOfType(primaryTopic.asResource().getURI(), CommonIRI.FOAF.toString()+"Person") || 
+				classifier.isOfType(primaryTopic.asResource().getURI(), CommonIRI.SCHEMA.toString()+"Person")	) {
+				
+			}
+		}
+		return i;
 	}
 
 }
