@@ -1,9 +1,9 @@
 package webSemLB.common; // Change this to your own package if you want.
 
-import java.util.Collection;
+
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ResIterator;
+
 
 public abstract class RDFExtractor {
 

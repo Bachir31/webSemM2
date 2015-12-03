@@ -59,7 +59,7 @@ public class ClassifierImpl implements Classifier {
 				break;
 			} catch (Exception e) {
 				model.remove(model);
-				logger.warn("[ClassifierImpl.retrieveTypes] Bad format : " + format.toString());
+				//logger.warn("[ClassifierImpl.retrieveTypes] Bad format : " + format.toString());
 			}
 		}
 		return typesSet;
@@ -98,7 +98,7 @@ public class ClassifierImpl implements Classifier {
 				break;
 			} catch (Exception e) {
 				model.remove(model);//erase RDF graph and reinitialize him
-				logger.warn("[retrieveSuperClasses] Bad format : " + format.toString());
+				//logger.warn("[retrieveSuperClasses] Bad format : " + format.toString());
 			}
 		}
 
@@ -138,12 +138,12 @@ public class ClassifierImpl implements Classifier {
 
 	public boolean isOfType(String entityIRI, String classIRI) {
 		if (entityIRI == null || classIRI == null) {
-			logger.warn("Null entries in arguments of isOfType");
+			//logger.warn("Null entries in arguments of isOfType");
 			return false;
 		}
 
 		if (entityIRI.isEmpty() || classIRI.isEmpty()) {
-			logger.warn("Empty entries in arguments of isOfType");
+			//logger.warn("Empty entries in arguments of isOfType");
 			return false;
 		}
 		Collection<String> result = getAllTypes(entityIRI);

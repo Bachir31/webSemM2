@@ -8,23 +8,28 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import webSemLB.ClassExtractor.impl.ClassifierImpl;
 import webSemLB.common.PersonData;
 import webSemLB.common.PersonDataImpl;
+import webSemLB.common.PersonExtractor;
 
 public class Run {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ClassifierImpl classifier = new ClassifierImpl();
+		//ClassifierImpl classifier = new ClassifierImpl();
 		
-		classifier.getAllTypes("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#shadi");
+		/* test de getAllTypes */
+		//classifier.getAllTypes("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#shadi");
 		
-		if(classifier.isOfType("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#madamic", "http://www.emse.fr/~zimmermann/Teaching/SemWeb/other.ttl#Human")){
+		/* test  de isOfType */
+		/*if(classifier.isOfType("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#madamic", "http://www.emse.fr/~zimmermann/Teaching/SemWeb/other.ttl#Human")){
 			System.out.println("ok");
 		} else {
 			System.out.println("not ok");
-		}
+		}*/
 		
+		PersonExtractor personExtractor =  new PersonExtractor();
 		
-		Model m = ModelFactory.createDefaultModel();
+		personExtractor.showPersonData("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html");
+		/*Model m = ModelFactory.createDefaultModel();
 		m.read("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#shadi","RDFA");
 		PersonData person = new PersonDataImpl();
 		RDFNode r = m.createResource("http://www.emse.fr/~zimmermann/Teaching/SemWeb/w3cstaff.html#eric");
@@ -33,7 +38,7 @@ public class Run {
 		
 		if(s1 != null && s2 != null) {
 			System.out.println(s1 + " " + s2);
-		}
+		}*/
 	}
 
 }
