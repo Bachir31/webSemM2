@@ -14,10 +14,6 @@ public class PersonDataImpl implements PersonData {
 
 	private static Logger logger = Logger.getLogger(PersonDataImpl.class);
 
-	private final String NS_FOAF = "http://xmlns.com/foaf/0.1/";
-	private final String NS_SCHEME = "http://schema.org/";
-	private final String NS_DBO = "http://dbpedia.org/ontology/";
-
 	public PersonDataImpl() {
 
 	}
@@ -35,12 +31,12 @@ public class PersonDataImpl implements PersonData {
 
 		if (person.isResource()) {
 			resourcePerson = (Resource) person;
-			Property propertyFoafName = model.createProperty(NS_FOAF + "name");
-			Property propertyFoafFirstName = model.createProperty(NS_FOAF + "firstName");
-			Property propertyFoafLastName = model.createProperty(NS_FOAF + "lastName");
-			Property propertySchemeName = model.createProperty(NS_SCHEME + "name");
-			Property propertySchemeGivenName = model.createProperty(NS_SCHEME + "givenName");
-			Property propertySchemeFamilyName = model.createProperty(NS_SCHEME + "familyName");
+			Property propertyFoafName = model.createProperty(CommonIRI.FOAF + "name");
+			Property propertyFoafFirstName = model.createProperty(CommonIRI.FOAF + "firstName");
+			Property propertyFoafLastName = model.createProperty(CommonIRI.FOAF + "lastName");
+			Property propertySchemeName = model.createProperty(CommonIRI.SCHEMA + "name");
+			Property propertySchemeGivenName = model.createProperty(CommonIRI.SCHEMA + "givenName");
+			Property propertySchemeFamilyName = model.createProperty(CommonIRI.SCHEMA + "familyName");
 			Property propertyRdfsLabel = model.createProperty(RDFS.LABEL);
 
 			if (resourcePerson.hasProperty(propertyFoafName)) {
@@ -87,9 +83,9 @@ public class PersonDataImpl implements PersonData {
 
 		if (person.isResource()) {
 			resourcePerson = (Resource) person;
-			Property propertyDboBirth = model.createProperty(NS_DBO + "birthDate");
+			Property propertyDboBirth = model.createProperty(CommonIRI.DBO + "birthDate");
 			Property propertyVcardBirth = model.createProperty(VCARD.BDAY.getURI());
-			Property propertySchemeBirth = model.createProperty(NS_SCHEME + "birthDate");
+			Property propertySchemeBirth = model.createProperty(CommonIRI.SCHEMA + "birthDate");
 			
 			if (resourcePerson.hasProperty(propertyDboBirth)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyDboBirth);
@@ -121,8 +117,8 @@ public class PersonDataImpl implements PersonData {
 		
 		if (person.isResource()) {
 			resourcePerson = (Resource) person;
-			Property propertyDboDeath = model.createProperty(NS_DBO + "deathDate");
-			Property propertySchemeDeath = model.createProperty(NS_SCHEME + "deathDate");
+			Property propertyDboDeath = model.createProperty(CommonIRI.DBO + "deathDate");
+			Property propertySchemeDeath = model.createProperty(CommonIRI.SCHEMA + "deathDate");
 			
 			if (resourcePerson.hasProperty(propertyDboDeath)) {
 				statement1 = (Statement) resourcePerson.getProperty(propertyDboDeath);
@@ -149,9 +145,9 @@ public class PersonDataImpl implements PersonData {
 
 		if (person.isResource()) {
 			resourcePerson = (Resource) person;
-			Property propertyFoafImg = model.createProperty(NS_FOAF + "img");
-			Property propertyFoafDepiction = model.createProperty(NS_FOAF + "depiction");
-			Property propertyShemeImg = model.createProperty(NS_SCHEME + "image");
+			Property propertyFoafImg = model.createProperty(CommonIRI.FOAF + "img");
+			Property propertyFoafDepiction = model.createProperty(CommonIRI.FOAF + "depiction");
+			Property propertyShemeImg = model.createProperty(CommonIRI.SCHEMA + "image");
 			
 			if (resourcePerson.hasProperty(propertyFoafImg)) {
 				statement1 = resourcePerson.getProperty(propertyFoafImg);
